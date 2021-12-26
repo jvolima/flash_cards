@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id          String @id @default(uuid())
+  name        String 
+  email       String @unique
+  password    String
+
+  @@map("users")
+
+  tokens UserToken[]
+  flashCards FlashCard[]
+}
+
+model UserToken {
+  id            String @id @default(uuid())
+  id_user       String
+  token         String
+  created_at    DateTime @default(now())
+  expires_date  DateTime
+
+  @@map("usersTokens")
+
+  user User @relation(fields: [id_user], references: [id])
+}
+
+model FlashCard {
+  id          String @id @default(uuid())
+  id_user     String
+  question    String
+  answer      String
+  created_at  DateTime
+
+  @@map("flashCards")
+
+  user User @relation(fields: [id_user], references: [id])
+}
+
